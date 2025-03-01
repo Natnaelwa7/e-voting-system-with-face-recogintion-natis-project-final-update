@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Election Results</h2>
+
+    {% for election, parties in results.items() %}
+        <h3>{{ election }}</h3>
+        {% for party, data in parties.items() %}
+            <h4>{{ party }} (Total Votes: {{ data.party_votes }})</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Votes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in data.candidates %}
+                        <tr>
+                            <td>{{ candidate.candidate_name }}</td>
+                            <td>{{ candidate.votes }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          
+            
+        {% endfor %}
+    {% endfor %}
+    <a href="{{ url_for('home') }}">
+        <button>Back to Home</button>
+    </a>
+</div>
+{% endblock %}

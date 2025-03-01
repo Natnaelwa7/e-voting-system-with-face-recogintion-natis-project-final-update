@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Candidates List
+{% endblock %}
+
+{% block content %}
+    <h1>Candidates List</h1>
+
+    <!-- Form to Add New Candidate -->
+    <h2>Add New Candidate</h2>
+    <form method="POST">
+        <label for="candidate_name">Candidate Name:</label>
+        <input type="text" id="candidate_name" name="candidate_name" required>
+
+        <label for="party_id">Party:</label>
+        <select id="party_id" name="party_id" required>
+            {% for party in parties %}
+                <option value="{{ party.id }}">{{ party.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="election_id">Election:</label>
+        <select id="election_id" name="election_id" required>
+            {% for election in elections %}
+                <option value="{{ election.id }}">{{ election.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Add Candidate</button>
+    </form>
+
+    <!-- Display List of Candidates -->
+    <h2>Current Candidates</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Candidate Name</th>
+                <th>Party</th>
+                <th>Election</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+                <tr>
+                    <td>{{ candidate.name }}</td>
+                    <td>{{ candidate.party.name }}</td>
+                    <td>{{ candidate.election.name }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

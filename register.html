@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .registration-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+        margin-bottom: 20px;
+    }
+    video, canvas {
+        width: 100%;
+        max-width: 400px;
+        border: 2px solid #007BFF;
+        border-radius: 10px;
+    }
+    .btn-custom {
+        margin-top: 10px;
+        width: 100%;
+    }
+    #captureMessage {
+        color: green;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    #message {
+        margin-top: 15px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container registration-container">
+    <h2>Voter Registration</h2>
+    <form id="registrationForm">
+        <div class="mb-3">
+            <input type="text" id="name" class="form-control" placeholder="Full Name" required>
+        </div>
+        <div class="mb-3">
+            <input type="email" id="email" class="form-control" placeholder="Email" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" id="password" class="form-control" placeholder="Password" required>
+        </div>
+        <video id="video" autoplay></video>
+        <button type="button" class="btn btn-primary btn-custom" onclick="captureImage()">Capture Image</button>
+        <p id="captureMessage"></p>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <input type="hidden" id="imageData">
+        <button type="submit" class="btn btn-success btn-custom">Register</button>
+    </form>
+    <p id="message"></p>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const imageDataInput = document.getElementById('imageData');
+    const captureMessage = document.getElementById('captureMessage');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => video.srcObject = stream)
+        .catch(err => console.error("Error accessing webcam:", err));
+
+    function captureImage() {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        imageDataInput.value = canvas.toDataURL('image/jpeg');
+        captureMessage.textContent = "Face captured successfully!";
+    }
+
+    document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const image = imageDataInput.value;
+
+        if (!image) {
+            document.getElementById('message').textContent = "Please capture an image before submitting.";
+            return;
+        }
+
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, image })
+        });
+
+        const result = await response.json();
+        document.getElementById('message').textContent = result.message;
+        
+        if (response.ok) {
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
+        }
+    });
+</script>
+
+{% endblock %}

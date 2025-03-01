@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Add New Candidate</h2>
+    <form method="POST" action="{{ url_for('add_candidate') }}">
+        <div>
+            <label for="name">Candidate Name:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div>
+            <label for="party_id">Select Party:</label>
+            <select name="party_id" required>
+                {% for party in parties %}
+                    <option value="{{ party.id }}">{{ party.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="election_id">Select Election:</label>
+            <select name="election_id" required>
+                {% for election in elections %}
+                    <option value="{{ election.id }}">{{ election.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Add Candidate</button>
+    </form>
+</div>
+{% endblock %}

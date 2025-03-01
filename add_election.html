@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Election{% endblock %}
+
+{% block content %}
+<h2>Add New Election</h2>
+<form method="POST">
+    <div>
+        <label for="name">Election Name:</label>
+        <input type="text" name="name" required>
+    </div>
+    <div>
+        <label for="start_time">Start Time:</label>
+        <input type="datetime-local" name="start_time" required>
+    </div>
+    <div>
+        <label for="end_time">End Time:</label>
+        <input type="datetime-local" name="end_time" required>
+    </div>
+    <div>
+        <label for="description">Description:</label>
+        <textarea name="description"></textarea>
+    </div>
+    <div>
+        <label for="parties">Select Parties:</label>
+        <select name="parties" multiple>
+            {% for party in parties %}
+                <option value="{{ party.id }}">{{ party.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit">Create Election</button>
+</form>
+<a href="{{ url_for('eadmin_dashboard') }}">Back to Dashboard</a>
+{% endblock %}

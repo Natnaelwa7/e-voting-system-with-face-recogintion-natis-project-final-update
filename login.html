@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .login-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+    video, canvas {
+        width: 100%;
+        max-width: 400px;
+        border: 2px solid #3498db;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+    .btn-custom {
+        margin-top: 10px;
+        width: 100%;
+        padding: 12px;
+        transition: all 0.3s ease;
+    }
+    .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .error {
+        color: #e74c3c;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .message {
+        text-align: center;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+    }
+    .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .fail {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+        border: 2px solid #dfe6e9;
+    }
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: none;
+    }
+</style>
+
+<div class="container login-container">
+    <h2 class="text-center mb-4">Voter Login</h2>
+    
+    <div id="error-message" class="message fail"></div>
+    <div id="success-message" class="message success"></div>
+
+    <div class="card p-4 shadow">
+        <form id="login-form">
+            <div class="mb-3">
+                <label class="form-label">Email:</label>
+                <input type="email" id="email" class="form-control" required>
+                <div id="email-error" class="error"></div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Password:</label>
+                <input type="password" id="password" class="form-control" required>
+                <div id="password-error" class="error"></div>
+            </div>
+
+            <div class="mb-4">
+                <div class="text-center">
+                    <video id="video" autoplay class="mb-2"></video>
+                    <button type="button" class="btn btn-primary btn-custom" onclick="captureImage()">
+                        <i class="bi bi-camera me-2"></i>Capture Face
+                    </button>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                    <div id="image-error" class="error mt-2"></div>
+                </div>
+            </div>
+
+            <input type="hidden" id="image_data">
+            <button type="submit" class="btn btn-success btn-custom">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let stream;
+    
+    // Request webcam access
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+        .then(s => {
+            stream = s;
+            document.getElementById("video").srcObject = stream;
+        })
+        .catch(err => {
+            console.error("Webcam error:", err);
+            showError("Could not access webcam. Please enable camera permissions.");
+        });
+
+    function captureImage() {
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = canvas.toDataURL("image/jpeg");
+        document.getElementById("image_data").value = imageData;
+        document.getElementById("image-error").textContent = "";
+    }
+
+    // Form Submission
+    document.getElementById("login-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        
+        clearMessages();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const imageData = document.getElementById("image_data").value;
+        let isValid = true;
+
+        // Validation
+        if (!email) {
+            document.getElementById("email-error").textContent = "Email is required";
+            isValid = false;
+        }
+        if (!password) {
+            document.getElementById("password-error").textContent = "Password is required";
+            isValid = false;
+        }
+        if (!imageData) {
+            document.getElementById("image-error").textContent = "Please capture your face";
+            isValid = false;
+        }
+
+        if (!isValid) return;
+
+        fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, image: imageData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccess(data.message);
+                
+                // Ensure immediate redirection after login
+                window.location.replace(data.redirect);
+            } else {
+                showError(data.message || "Login failed");
+            }
+        })
+        .catch(error => {
+            console.error("Login error:", error);
+            showError("An error occurred. Please try again.");
+        });
+    });
+
+    function clearMessages() {
+        document.querySelectorAll(".error").forEach(el => el.textContent = "");
+        document.getElementById("error-message").style.display = "none";
+        document.getElementById("success-message").style.display = "none";
+    }
+
+    function showError(message) {
+        const el = document.getElementById("error-message");
+        el.textContent = message;
+        el.style.display = "block";
+    }
+
+    function showSuccess(message) {
+        const el = document.getElementById("success-message");
+        el.textContent = message;
+        el.style.display = "block";
+    }
+
+    // Cleanup webcam on page leave
+    window.addEventListener("beforeunload", () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    });
+</script>
+
+<!-- Bootstrap Icons -->
+{% endblock %}

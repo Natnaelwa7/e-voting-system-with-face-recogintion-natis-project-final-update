@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 100px 0;
+        margin-bottom: 50px;
+    }
+    
+    .feature-card {
+        transition: transform 0.3s;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .role-section {
+        padding: 50px 0;
+    }
+    
+    .btn-custom {
+        padding: 10px 25px;
+        border-radius: 25px;
+        margin: 5px;
+        transition: all 0.3s;
+    }
+    
+    .btn-voter {
+        background: #4CAF50;
+        color: white;
+    }
+    
+    .btn-eadmin {
+        background: #2196F3;
+        color: white;
+    }
+    
+    .btn-sysadmin {
+        background: #9C27B0;
+        color: white;
+    }
+    
+    .icon-container {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+</style>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">E-Vote</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Voter Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/eadmin/login">Election Officer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sysadmin/login">System Admin</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 mb-4">Welcome to Secure E-Voting</h1>
+        <p class="lead">Cast your vote securely from anywhere, anytime</p>
+        <div class="mt-4">
+            <a href="/register" class="btn btn-light btn-lg mx-2">Voter Registration</a>
+            <a href="/login" class="btn btn-outline-light btn-lg mx-2">Voter Login</a>
+        </div>
+    </div>
+</div>
+
+<!-- Roles Section -->
+<div class="container role-section">
+    <div class="row g-4">
+        <!-- Voter Card -->
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="icon-container text-success">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Voter</h3>
+                    <p class="card-text">Participate in elections securely using Facial recogintion-based verification.</p>
+                    <div class="mt-4">
+                        <a href="/register" class="btn btn-custom btn-voter">Register</a>
+                        <a href="/login" class="btn btn-custom btn-outline-secondary">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Election Officer Card -->
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="icon-container text-primary">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Election Officer</h3>
+                    <p class="card-text">Manage election processes and monitor real-time voting statistics.</p>
+                    <div class="mt-4">
+                        <a href="/eadmin/register" class="btn btn-custom btn-eadmin">Register</a>
+                        <a href="/eadmin/login" class="btn btn-custom btn-outline-secondary">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Admin Card -->
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="icon-container text-danger">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="card-title mb-3">System Admin</h3>
+                    <p class="card-text">Manage system configurations and maintain platform security.</p>
+                    <div class="mt-4">
+                        <a href="/sysadmin/register" class="btn btn-custom btn-sysadmin">Register</a>
+                        <a href="/sysadmin/login" class="btn btn-custom btn-outline-secondary">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white mt-5">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>About E-Vote</h5>
+                <p class="text-muted">Secure digital voting platform using Facial recogintion technology</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <p class="mb-0">&copy; 2025 E-Vote System. All rights reserved By Natnael Asrat.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+
+{% endblock %}

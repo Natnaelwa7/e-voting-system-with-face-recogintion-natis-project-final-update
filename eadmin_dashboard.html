@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Election Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2>Election Admin Dashboard</h2>
+
+<h3>Current Elections</h3>
+<ul>
+    {% for election in elections %}
+        <li>{{ election.name }} ({{ election.start_time }} - {{ election.end_time }})</li>
+    {% endfor %}
+</ul>
+
+<h3>Manage Candidates</h3>
+<a href="{{ url_for('add_candidate') }}">Add New Candidate</a>
+
+<h3>Manage Parties</h3>
+<a href="{{ url_for('add_party') }}">Add New Party</a>
+
+<h3>Manage Elections</h3>
+<a href="{{ url_for('add_election') }}">Add New Election</a>
+<a href="{{ url_for('home') }}">
+    <button>Back to Home</button>
+</a>
+
+{% endblock %}
